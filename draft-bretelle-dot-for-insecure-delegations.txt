@@ -80,12 +80,12 @@ Table of Contents
 1.  Introduction
 
    This document describes an alternate mechanism to [RFC6698] as
-   described in [I-D.draft-bortzmeyer-dprive-resolver-to-auth-01]
-   Section 2 extending the authentication of DoT [RFC7858] to insecure
-   delegations enabling the onboarding of DoT authorities without the
-   requirement for the authorities to support DNSSEC.  To do so, this
-   document introduce the Delegation SPKI (DSPKI) resource record, its
-   purpose, usage and format.
+   described in [I-D.bortzmeyer-dprive-resolver-to-auth] Section 2
+   extending the authentication of DoT [RFC7858] to insecure delegations
+   enabling the onboarding of DoT authorities without the requirement
+   for the authorities to support DNSSEC.  To do so, this document
+   introduce the Delegation SPKI (DSPKI) resource record, its purpose,
+   usage and format.
 
 2.  Terminology
 
@@ -121,9 +121,9 @@ Internet-Draft        dot-for-insecure-delegations        September 2018
 
    To authenticate a DoT server of a secure delegation, it is possible
    to use use the TLSA resource record [RFC6698] of the nameserver as
-   decribed in [I-D.draft-bortzmeyer-dprive-resolver-to-auth-01]
-   Section 2, while this method is valid, it precludes the onboarding of
-   insecure delegation as DoT servers.
+   decribed in [I-D.bortzmeyer-dprive-resolver-to-auth] Section 2, while
+   this method is valid, it precludes the onboarding of insecure
+   delegation as DoT servers.
 
    Without the use of DNSSEC, a delegation is not able to authenticate
    itself as the chain of trust is not continued, however other
@@ -260,13 +260,13 @@ Internet-Draft        dot-for-insecure-delegations        September 2018
 
 7.1.  Normative References
 
-   [I-D.draft-bortzmeyer-dprive-resolver-to-auth-01]
+   [I-D.bortzmeyer-dprive-resolver-to-auth]
               Bortzmeyer, S., "Encryption and authentication of the DNS
               resolver-to-authoritative communication", draft-
               bortzmeyer-dprive-resolver-to-auth-01 (work in progress),
               March 2018.
 
-   [I-D.draft-ietf-dnsop-terminology-bis-14]
+   [I-D.ietf-dnsop-terminology-bis]
               Hoffman, P., Sullivan, A., and K. Fujiwara, "DNS
               Terminology", draft-ietf-dnsop-terminology-bis-14 (work in
               progress), September 2018.
