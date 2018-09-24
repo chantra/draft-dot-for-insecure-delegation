@@ -1,0 +1,392 @@
+
+
+
+
+Network Working Group                                        M. Bretelle
+Internet-Draft                                                  Facebook
+Expires: March 27, 2019                               September 23, 2018
+
+
+                 DNS-over-TLS for insecure delegations
+           draft-bretelle-dot-for-insecure-delegations-latest
+
+Abstract
+
+   This document describes an alternate mechanism to [RFC6698] to extend
+   DNS-over-TLS (DoT [RFC7858]) authoritative server authentication to
+   insecure delegations.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on March 27, 2019.
+
+Copyright Notice
+
+   Copyright (c) 2018 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+
+
+Bretelle                 Expires March 27, 2019                 [Page 1]
+
+Internet-Draft        dot-for-insecure-delegations        September 2018
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+   2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   2
+   3.  Authenticating an insecure delegation . . . . . . . . . . . .   3
+     3.1.  Public Key Infranstructure (PKIX) . . . . . . . . . . . .   3
+     3.2.  Simple Public-Key Infrastructure (SPKI) . . . . . . . . .   3
+     3.3.  Authenticating from the parent  . . . . . . . . . . . . .   4
+       3.3.1.  Example . . . . . . . . . . . . . . . . . . . . . . .   4
+   4.  DSPKI Resource Record . . . . . . . . . . . . . . . . . . . .   5
+     4.1.  DSPKI RDATA Format  . . . . . . . . . . . . . . . . . . .   5
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .   6
+   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .   6
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   7
+
+1.  Introduction
+
+   This document describes an alternate mechanism to [RFC6698] as
+   described in [I-D.draft-bortzmeyer-dprive-resolver-to-auth-01]
+   Section 2 extending the authentication of DoT [RFC7858] to insecure
+   delegations enabling the onboarding of DoT authorities without the
+   requirement for the authorities to support DNSSEC.  To do so, this
+   document introduce the Delegation SPKI (DSPKI) resource record, its
+   purpose, usage and format.
+
+2.  Terminology
+
+   A server that supports DNS-over-TLS is called a "DoT server" to
+   differentiate it from a "DNS Server" (one that provides DNS service
+   over any other protocol), likewise, a client that supports this
+   protocol is called a "DoT client"
+
+   A secure delegation ([RFC4956] Section 2) is a signed name containing
+   a delegation (NS RRset), and a signed DS RRset, signifying a
+   delegation to a signed zone.
+
+   An insecure delegation ([RFC4956] Section 2) is a signed name
+   containing a delegation (NS RRset), but lacking a DS RRset,
+   signifying a delegation to an unsigned subzone.
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+
+
+
+
+Bretelle                 Expires March 27, 2019                 [Page 2]
+
+Internet-Draft        dot-for-insecure-delegations        September 2018
+
+
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+3.  Authenticating an insecure delegation
+
+   To authenticate a DoT server of a secure delegation, it is possible
+   to use use the TLSA resource record [RFC6698] of the nameserver as
+   decribed in [I-D.draft-bortzmeyer-dprive-resolver-to-auth-01]
+   Section 2, while this method is valid, it precludes the onboarding of
+   insecure delegation as DoT servers.
+
+   Without the use of DNSSEC, a delegation is not able to authenticate
+   itself as the chain of trust is not continued, however other
+   mechanisms exist to have a server authenticate itself, such as Public
+   Key Infranstructure (PKIX [RFC6125]) , SPKI, which have their own
+   advantages and inconvenients.
+
+3.1.  Public Key Infranstructure (PKIX)
+
+   It would be possible to authenticate the nameservers of the insecure
+   delegation using PKIX, relying on an existing trust model and trust
+   anchors.
+
+   While simple, a single trusted CA that break the trust (voluntarily
+   or involuntarily), can issue certificate for any domains, allowing an
+   attacker to potentially impersonate both the application and the DoT
+   server.
+
+   Another issue that rises is that the DoT servers may use an identity
+   which belong to the same origin, which could permit personal
+   information (such as cookies) to be leaked to the servers owning the
+   certificate.
+
+3.2.  Simple Public-Key Infrastructure (SPKI)
+
+   SPKI on the other hand does not have the same issues than PKIX, the
+   certificates can be generated by the authority itself, adding a
+   separation of privilege between the PKIX infrastructure and the DNS
+   one.
+
+   The problem is now on how to advertise/distribute the delegation
+   public key.
+
+   This is in essence what TLSA records solve, but with the use of
+   DNSSEC enabled and functional for the queried zone.  For insecure
+   delegations, simply advertising the public key would be subject to
+   interception and mangling.
+
+
+
+
+Bretelle                 Expires March 27, 2019                 [Page 3]
+
+Internet-Draft        dot-for-insecure-delegations        September 2018
+
+
+3.3.  Authenticating from the parent
+
+   While a delegation is not secured, the DNS core infrastructure
+   already support DNSSEC, meaning that if the owner of an insecure
+   delegation could set the public key to authenticate the DoT servers
+   against, such key could be authenticated using DNSSEC, which would
+   then permit trusting the DoT servers providing their certificate
+   validates against the (validated) public key provided by the parent.
+
+   From this stage, the "formerly" insecure delegation can be
+   authenticated, and therefore considered secure, allowing delegating
+   to other zones which can be authenticated by either DNSSEC or TLS.
+
+   In order to provide its public key to the DoT clients, an insecure
+   would set the DSPKI RRset at the parent with the content of its
+   extracted SPKI, which the parent then sign.
+
+   A DoT client which is about to talk with a DoT server can obtain and
+   validate the DSPKI RRset from the parent and authenticate the DoT
+   server, without needing the DoT server to serve a secure delegation.
+
+3.3.1.  Example
+
+   example.com is an insecure delegation from .com which has set the
+   DSPKI RRset.
+
+   A DoT client looking for records under example.com will learn from
+   .com that example.com is delegated to
+
+   example.com 172800 NS ns1.example.com
+   example.com 172800 NS ns2.example.com
+   example.com 86400 DSPKI h0KPxSKAPTEGXnvOPPA/5HUJZjHl4Hu9eg/eYMTPJcc=
+   ns1.example.com 172800 AAAA 2001:db8:abcd:12:1:2:3:4
+   ns2.example.com 172800 AAAA 2001:db8:abcd:ab:1:2:3:4
+
+   with the accompanying signature.
+
+   The DSPKI RRset signals that the nameservers are able to support DNS-
+   over-TLS and the DoT client can authenticate them using the provided
+   public key,
+
+   If subone.example.com is a delegation from example.com, example.com
+   can provide the DSPKI RRSet of the delegation.  While example.com is
+   not a secured delegation, because it has been authenticated using
+   TLS, it is also able to be part of the chain of trust and provide
+   either a DS or DSPKI RRset for subzone.example.com
+
+
+
+
+
+Bretelle                 Expires March 27, 2019                 [Page 4]
+
+Internet-Draft        dot-for-insecure-delegations        September 2018
+
+
+4.  DSPKI Resource Record
+
+   There may be 0 or more DSPKI served by the parent of the delegation.
+   0 would mean that DSPKI is not supported, therefore the DoT client
+   could try other alternatives.  1 or multiple public keys can be
+   distributed to let the DoT client validate multiple public keys,
+   which can be useful while doing certificate rotation or when willing
+   to provide different secret keys to different providers that may
+   serve the delegated zone.
+
+4.1.  DSPKI RDATA Format
+
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+   /                  PUBKEY                       /
+   /                                               /
+   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
+   Where PUBKEY: A base64 encoded string of the sha256sum of the public
+   key, as generated by: ~~~~ openssl x509 -in cert.pem -pubkey -noout |
+   openssl pkey -pubin -outform der | \ openssl dgst -sha256 -binary |
+   openssl enc -base64 ~~~~
+
+5.  Security Considerations
+
+   TODO Security
+
+6.  IANA Considerations
+
+   TODO: This document requires IANA actions (new RR type).
+
+7.  References
+
+7.1.  Normative References
+
+   [I-D.draft-bortzmeyer-dprive-resolver-to-auth-01]
+              Bortzmeyer, S., "Encryption and authentication of the DNS
+              resolver-to-authoritative communication", draft-
+              bortzmeyer-dprive-resolver-to-auth-01 (work in progress),
+              March 2018.
+
+   [I-D.draft-ietf-dnsop-terminology-bis-14]
+              Hoffman, P., Sullivan, A., and K. Fujiwara, "DNS
+              Terminology", draft-ietf-dnsop-terminology-bis-14 (work in
+              progress), September 2018.
+
+
+
+
+
+
+
+Bretelle                 Expires March 27, 2019                 [Page 5]
+
+Internet-Draft        dot-for-insecure-delegations        September 2018
+
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC4956]  Arends, R., Kosters, M., and D. Blacka, "DNS Security
+              (DNSSEC) Opt-In", RFC 4956, DOI 10.17487/RFC4956, July
+              2007, <https://www.rfc-editor.org/info/rfc4956>.
+
+   [RFC6125]  Saint-Andre, P. and J. Hodges, "Representation and
+              Verification of Domain-Based Application Service Identity
+              within Internet Public Key Infrastructure Using X.509
+              (PKIX) Certificates in the Context of Transport Layer
+              Security (TLS)", RFC 6125, DOI 10.17487/RFC6125, March
+              2011, <https://www.rfc-editor.org/info/rfc6125>.
+
+   [RFC6698]  Hoffman, P. and J. Schlyter, "The DNS-Based Authentication
+              of Named Entities (DANE) Transport Layer Security (TLS)
+              Protocol: TLSA", RFC 6698, DOI 10.17487/RFC6698, August
+              2012, <https://www.rfc-editor.org/info/rfc6698>.
+
+   [RFC7250]  Wouters, P., Ed., Tschofenig, H., Ed., Gilmore, J.,
+              Weiler, S., and T. Kivinen, "Using Raw Public Keys in
+              Transport Layer Security (TLS) and Datagram Transport
+              Layer Security (DTLS)", RFC 7250, DOI 10.17487/RFC7250,
+              June 2014, <https://www.rfc-editor.org/info/rfc7250>.
+
+   [RFC7858]  Hu, Z., Zhu, L., Heidemann, J., Mankin, A., Wessels, D.,
+              and P. Hoffman, "Specification for DNS over Transport
+              Layer Security (TLS)", RFC 7858, DOI 10.17487/RFC7858, May
+              2016, <https://www.rfc-editor.org/info/rfc7858>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+7.2.  Informative References
+
+   [CORS]     "Cross-Origin Resource Sharing", n.d.,
+              <https://fetch.spec.whatwg.org/#http-cors-protocol>.
+
+Acknowledgments
+
+   TODO acknowledge.
+
+
+
+
+
+
+
+Bretelle                 Expires March 27, 2019                 [Page 6]
+
+Internet-Draft        dot-for-insecure-delegations        September 2018
+
+
+Author's Address
+
+   Emmanuel Bretelle
+   Facebook
+
+   Email: chantra@fb.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Bretelle                 Expires March 27, 2019                 [Page 7]
