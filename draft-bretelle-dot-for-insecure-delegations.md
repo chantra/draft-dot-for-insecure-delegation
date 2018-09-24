@@ -27,8 +27,8 @@ normative:
   RFC7250:
   RFC7858:
   RFC8174:
-  I-D.draft-bortzmeyer-dprive-resolver-to-auth-01:
-  I-D.draft-ietf-dnsop-terminology-bis-14:
+  I-D.bortzmeyer-dprive-resolver-to-auth:
+  I-D.ietf-dnsop-terminology-bis:
 
 informative:
   CORS:
@@ -46,7 +46,7 @@ delegations.
 # Introduction
 
 This document describes an alternate mechanism to {{RFC6698}} as described in
-{{I-D.draft-bortzmeyer-dprive-resolver-to-auth-01}} Section 2 extending the
+{{I-D.bortzmeyer-dprive-resolver-to-auth}} Section 2 extending the
 authentication of DoT {{RFC7858}} to insecure delegations enabling the
 onboarding of DoT authorities without the requirement for the authorities to
 support DNSSEC.
@@ -77,7 +77,7 @@ appear in all capitals, as shown here.
 
 To authenticate a DoT server of a secure delegation, it is possible to use use
 the TLSA resource record {{RFC6698}} of the nameserver as decribed in
-{{I-D.draft-bortzmeyer-dprive-resolver-to-auth-01}} Section 2, while this method
+{{I-D.bortzmeyer-dprive-resolver-to-auth}} Section 2, while this method
 is valid, it precludes the onboarding of insecure delegation as DoT servers.
 
 Without the use of DNSSEC, a delegation is not able to authenticate itself as
