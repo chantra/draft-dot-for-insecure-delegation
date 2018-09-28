@@ -292,9 +292,7 @@ ul.toc li {
 <link href="#rfc.section.4.1" rel="Chapter" title="4.1 DSPKI RDATA Format">
 <link href="#rfc.section.5" rel="Chapter" title="5 Security Considerations">
 <link href="#rfc.section.6" rel="Chapter" title="6 IANA Considerations">
-<link href="#rfc.references" rel="Chapter" title="7 References">
-<link href="#rfc.references.1" rel="Chapter" title="7.1 Normative References">
-<link href="#rfc.references.2" rel="Chapter" title="7.2 Informative References">
+<link href="#rfc.references" rel="Chapter" title="7 Normative References">
 <link href="#rfc.acknowledgments" rel="Chapter">
 <link href="#rfc.authors" rel="Chapter">
 
@@ -303,8 +301,8 @@ ul.toc li {
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Bretelle, M." />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-bretelle-dot-for-insecure-delegations-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2018-09-25" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-bretelle-dprive-dot-for-insecure-delegations-latest" />
+  <meta name="dct.issued" scheme="ISO8601" content="2018-09-27" />
   <meta name="dct.abstract" content="This document describes an alternate mechanism to " />
   <meta name="description" content="This document describes an alternate mechanism to " />
 
@@ -324,8 +322,12 @@ ul.toc li {
 <td class="right">Facebook</td>
 </tr>
 <tr>
-<td class="left">Expires: March 29, 2019</td>
-<td class="right">September 25, 2018</td>
+<td class="left">Intended status: Standards Track</td>
+<td class="right">September 27, 2018</td>
+</tr>
+<tr>
+<td class="left">Expires: March 31, 2019</td>
+<td class="right"></td>
 </tr>
 
     	
@@ -333,7 +335,7 @@ ul.toc li {
   </table>
 
   <p class="title">DNS-over-TLS for insecure delegations<br />
-  <span class="filename">draft-bretelle-dot-for-insecure-delegations-latest</span></p>
+  <span class="filename">draft-bretelle-dprive-dot-for-insecure-delegations-latest</span></p>
   
   <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
 <p>This document describes an alternate mechanism to <a href="#RFC6698" class="xref">[RFC6698]</a> to extend DNS-over-TLS (DoT <a href="#RFC7858" class="xref">[RFC7858]</a>) authoritative server authentication to insecure delegations.</p>
@@ -341,7 +343,7 @@ ul.toc li {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on March 29, 2019.</p>
+<p>This Internet-Draft will expire on March 31, 2019.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2018 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -373,13 +375,9 @@ ul.toc li {
 </li>
 <li>6.   <a href="#rfc.section.6">IANA Considerations</a>
 </li>
-<li>7.   <a href="#rfc.references">References</a>
+<li>7.   <a href="#rfc.references">Normative References</a>
 </li>
-<ul><li>7.1.   <a href="#rfc.references.1">Normative References</a>
-</li>
-<li>7.2.   <a href="#rfc.references.2">Informative References</a>
-</li>
-</ul><li><a href="#rfc.acknowledgments">Acknowledgments</a>
+<li><a href="#rfc.acknowledgments">Acknowledgments</a>
 </li>
 <li><a href="#rfc.authors">Author's Address</a>
 </li>
@@ -461,19 +459,12 @@ ns2.example.com 172800 AAAA 2001:db8:abcd:ab:1:2:3:4
 </h1>
 <p id="rfc.section.6.p.1">TODO: This document requires IANA actions (new RR type).</p>
 <h1 id="rfc.references">
-<a href="#rfc.references">7.</a> References</h1>
-<h1 id="rfc.references.1">
-<a href="#rfc.references.1">7.1.</a> Normative References</h1>
+<a href="#rfc.references">7.</a> Normative References</h1>
 <table><tbody>
 <tr>
 <td class="reference"><b id="I-D.bortzmeyer-dprive-resolver-to-auth">[I-D.bortzmeyer-dprive-resolver-to-auth]</b></td>
 <td class="top">
 <a>Bortzmeyer, S.</a>, "<a href="https://tools.ietf.org/html/draft-bortzmeyer-dprive-resolver-to-auth-01">Encryption and authentication of the DNS resolver-to-authoritative communication</a>", Internet-Draft draft-bortzmeyer-dprive-resolver-to-auth-01, March 2018.</td>
-</tr>
-<tr>
-<td class="reference"><b id="I-D.ietf-dnsop-terminology-bis">[I-D.ietf-dnsop-terminology-bis]</b></td>
-<td class="top">
-<a>Hoffman, P.</a>, <a>Sullivan, A.</a> and <a>K. Fujiwara</a>, "<a href="https://tools.ietf.org/html/draft-ietf-dnsop-terminology-bis-14">DNS Terminology</a>", Internet-Draft draft-ietf-dnsop-terminology-bis-14, September 2018.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC2119">[RFC2119]</b></td>
@@ -511,12 +502,6 @@ ns2.example.com 172800 AAAA 2001:db8:abcd:ab:1:2:3:4
 <a>Leiba, B.</a>, "<a href="https://tools.ietf.org/html/rfc8174">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>", BCP 14, RFC 8174, DOI 10.17487/RFC8174, May 2017.</td>
 </tr>
 </tbody></table>
-<h1 id="rfc.references.2">
-<a href="#rfc.references.2">7.2.</a> Informative References</h1>
-<table><tbody><tr>
-<td class="reference"><b id="CORS">[CORS]</b></td>
-<td class="top">"<a href="https://fetch.spec.whatwg.org/#http-cors-protocol">Cross-Origin Resource Sharing</a>", n.d..</td>
-</tr></tbody></table>
 <h1 id="rfc.acknowledgments"><a href="#rfc.acknowledgments">Acknowledgments</a></h1>
 <p id="rfc.section.A.p.1">TODO acknowledge.</p>
 <h1 id="rfc.authors"><a href="#rfc.authors">Author's Address</a></h1>
