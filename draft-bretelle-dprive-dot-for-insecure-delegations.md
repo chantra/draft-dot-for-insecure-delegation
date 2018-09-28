@@ -1,7 +1,8 @@
 ---
 title: DNS-over-TLS for insecure delegations
 abbrev: dot-for-insecure-delegations
-docname: draft-bretelle-dot-for-insecure-delegations-latest
+docname: draft-bretelle-dprive-dot-for-insecure-delegations-latest
+category: std
 
 stand_alone: true
 
@@ -28,12 +29,6 @@ normative:
   RFC7858:
   RFC8174:
   I-D.bortzmeyer-dprive-resolver-to-auth:
-  I-D.ietf-dnsop-terminology-bis:
-
-informative:
-  CORS:
-    title: "Cross-Origin Resource Sharing"
-    target: "https://fetch.spec.whatwg.org/#http-cors-protocol"
 
 --- abstract
 
