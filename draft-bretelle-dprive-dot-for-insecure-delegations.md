@@ -22,6 +22,9 @@ author:
 
 normative:
   RFC2119:
+  RFC4033:
+  RFC4034:
+  RFC4035:
   RFC4956:
   RFC6125:
   RFC6698:
@@ -32,9 +35,10 @@ normative:
 
 --- abstract
 
-This document describes an alternate mechanism to {{RFC6698}} to extend
-DNS-over-TLS (DoT {{RFC7858}}) authoritative server authentication to insecure
-delegations.
+This document describes an alternate mechanism to DANE ({{RFC6698}}) in order
+to authenticate a DNS-over-TLS (DoT {{RFC7858}}) authoritative server by not
+making DNSSEC a hard requirement, making DoT server authentication available for
+insecure delegations.
 
 --- middle
 
@@ -42,9 +46,10 @@ delegations.
 
 This document describes an alternate mechanism to {{RFC6698}} as described in
 {{I-D.bortzmeyer-dprive-resolver-to-auth}} Section 2 extending the
-authentication of DoT {{RFC7858}} to insecure delegations enabling the
-onboarding of DoT authorities without the requirement for the authorities to
-support DNSSEC.
+authentication of DoT {{RFC7858}} to insecure delegations and therefore
+enabling the onboarding of DoT authoritative servers without the requirement
+for the authorities to support DNSSEC ({{RFC4033}}, {{RFC4034}}, and
+{{RFC4035}}).
 To do so, this document introduce the Delegation SPKI (DSPKI) resource record,
 its purpose, usage and format.
 
@@ -73,10 +78,11 @@ appear in all capitals, as shown here.
 To authenticate a DoT server of a secure delegation, it is possible to use the
 TLSA resource record {{RFC6698}} of the nameserver as decribed in
 {{I-D.bortzmeyer-dprive-resolver-to-auth}} Section 2, while this method
-is valid, it precludes the onboarding of insecure delegation as DoT servers.
+is valid, the absence of support of DNSSEC for such delegations precludes the
+onboarding and discovery of nameservers serving those zones as DoT servers.
 
 Without the use of DNSSEC, a delegation is not able to authenticate itself as
-the chain of trust is not continued, however other mechanisms exist to have a
+the chain of trust cannot be followed, however other mechanisms exist to have a
 server authenticate itself, such as Public Key Infrastructure
 (PKIX {{RFC6125}}) , SPKI, which have their own pros and cons.
 
@@ -85,7 +91,7 @@ server authenticate itself, such as Public Key Infrastructure
 It would be possible to authenticate the nameservers of the insecure delegation
 using PKIX, relying on an existing trust model and trust anchors.
 
-While simple, a single trusted CA that break the trust (voluntarily or
+While simple, a single trusted CA that breaks said trust (voluntarily or
 involuntarily), can issue certificate for any domains, allowing an attacker to
 potentially impersonate both the application and the DoT server.
 
@@ -112,8 +118,9 @@ interception and mangling.
 While a delegation is not secured, the DNS core infrastructure already support
 DNSSEC, meaning that if the owner of an insecure delegation could set the public
 key to authenticate the DoT servers against, such key could be authenticated
-using DNSSEC, which would then permit trusting the DoT servers providing their
-certificate validates against the (validated) public key provided by the parent.
+using DNSSEC at the parent level, which would then permit trusting the DoT
+servers providing their certificate validates against the ( then validated)
+public key provided by the parent.
 
 From this stage, the "formerly" insecure delegation can be authenticated, and
 therefore considered secure, allowing delegating to other zones which can
@@ -147,7 +154,7 @@ with the accompanying signature.
 The DSPKI RRset signals that the nameservers are able to support DNS-over-TLS
 and the DoT client can authenticate them using the provided public key,
 
-If subone.example.com is a delegation from example.com, example.com can provide
+If subzone.example.com is a delegation from example.com, example.com can provide
 the DSPKI RRSet of the delegation. While example.com is not a secured delegation,
 because it has been authenticated using TLS, it is also able to be part of the
 chain of trust and provide either a DS or DSPKI RRset for subzone.example.com
