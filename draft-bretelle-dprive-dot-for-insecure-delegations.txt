@@ -4,8 +4,8 @@
 
 Network Working Group                                        M. Bretelle
 Internet-Draft                                                  Facebook
-Intended status: Standards Track                      September 27, 2018
-Expires: March 31, 2019
+Intended status: Standards Track                          March 08, 2019
+Expires: September 9, 2019
 
 
                  DNS-over-TLS for insecure delegations
@@ -33,11 +33,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on March 31, 2019.
+   This Internet-Draft will expire on September 9, 2019.
 
 Copyright Notice
 
-   Copyright (c) 2018 IETF Trust and the persons identified as the
+   Copyright (c) 2019 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Bretelle                 Expires March 31, 2019                 [Page 1]
+Bretelle                Expires September 9, 2019               [Page 1]
 
-Internet-Draft        dot-for-insecure-delegations        September 2018
+Internet-Draft        dot-for-insecure-delegations            March 2019
 
 
 Table of Contents
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Bretelle                 Expires March 31, 2019                 [Page 2]
+Bretelle                Expires September 9, 2019               [Page 2]
 
-Internet-Draft        dot-for-insecure-delegations        September 2018
+Internet-Draft        dot-for-insecure-delegations            March 2019
 
 
 3.  Authenticating an insecure delegation
@@ -165,9 +165,9 @@ Internet-Draft        dot-for-insecure-delegations        September 2018
 
 
 
-Bretelle                 Expires March 31, 2019                 [Page 3]
+Bretelle                Expires September 9, 2019               [Page 3]
 
-Internet-Draft        dot-for-insecure-delegations        September 2018
+Internet-Draft        dot-for-insecure-delegations            March 2019
 
 
 3.3.  Authenticating from the parent
@@ -221,9 +221,9 @@ Internet-Draft        dot-for-insecure-delegations        September 2018
 
 
 
-Bretelle                 Expires March 31, 2019                 [Page 4]
+Bretelle                Expires September 9, 2019               [Page 4]
 
-Internet-Draft        dot-for-insecure-delegations        September 2018
+Internet-Draft        dot-for-insecure-delegations            March 2019
 
 
 4.  DSPKI Resource Record
@@ -277,9 +277,9 @@ Internet-Draft        dot-for-insecure-delegations        September 2018
 
 
 
-Bretelle                 Expires March 31, 2019                 [Page 5]
+Bretelle                Expires September 9, 2019               [Page 5]
 
-Internet-Draft        dot-for-insecure-delegations        September 2018
+Internet-Draft        dot-for-insecure-delegations            March 2019
 
 
    [RFC4033]  Arends, R., Austein, R., Larson, M., Massey, D., and S.
@@ -333,9 +333,9 @@ Internet-Draft        dot-for-insecure-delegations        September 2018
 
 
 
-Bretelle                 Expires March 31, 2019                 [Page 6]
+Bretelle                Expires September 9, 2019               [Page 6]
 
-Internet-Draft        dot-for-insecure-delegations        September 2018
+Internet-Draft        dot-for-insecure-delegations            March 2019
 
 
 Acknowledgments
@@ -389,4 +389,4 @@ Author's Address
 
 
 
-Bretelle                 Expires March 31, 2019                 [Page 7]
+Bretelle                Expires September 9, 2019               [Page 7]
