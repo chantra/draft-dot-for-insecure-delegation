@@ -4,8 +4,8 @@
 
 Network Working Group                                        M. Bretelle
 Internet-Draft                                                  Facebook
-Intended status: Standards Track                          March 08, 2019
-Expires: September 9, 2019
+Intended status: Standards Track                          March 11, 2019
+Expires: September 12, 2019
 
 
                  DNS-over-TLS for insecure delegations
@@ -13,8 +13,8 @@ Expires: September 9, 2019
 
 Abstract
 
-   This document describes an alternate mechanism to DANE ([RFC6698]) in
-   order to authenticate a DNS-over-TLS (DoT [RFC7858]) authoritative
+   This document describes an alternative mechanism to DANE ([RFC6698])
+   in order to authenticate a DNS-over-TLS (DoT [RFC7858]) authoritative
    server by not making DNSSEC a hard requirement, making DoT server
    authentication available for insecure delegations.
 
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on September 9, 2019.
+   This Internet-Draft will expire on September 12, 2019.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Bretelle                Expires September 9, 2019               [Page 1]
+Bretelle               Expires September 12, 2019               [Page 1]
 
 Internet-Draft        dot-for-insecure-delegations            March 2019
 
@@ -63,28 +63,30 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
    2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   2
    3.  Authenticating an insecure delegation . . . . . . . . . . . .   3
-     3.1.  Public Key Infranstructure (PKIX) . . . . . . . . . . . .   3
-     3.2.  Simple Public-Key Infrastructure (SPKI) . . . . . . . . .   3
+     3.1.  Public Key Infrastructure (PKIX)  . . . . . . . . . . . .   3
+     3.2.  Subject Public Key Info (SPKI)  . . . . . . . . . . . . .   3
      3.3.  Authenticating from the parent  . . . . . . . . . . . . .   4
        3.3.1.  Example . . . . . . . . . . . . . . . . . . . . . . .   4
-   4.  DSPKI Resource Record . . . . . . . . . . . . . . . . . . . .   5
-     4.1.  DSPKI RDATA Format  . . . . . . . . . . . . . . . . . . .   5
-   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
-   7.  Normative References  . . . . . . . . . . . . . . . . . . . .   5
+   4.  DSPKI Resource Record . . . . . . . . . . . . . . . . . . . .   4
+     4.1.  The DSPKI Resource Record . . . . . . . . . . . . . . . .   5
+       4.1.1.  DSPKI RDATA Wire Format . . . . . . . . . . . . . . .   5
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
+   7.  Normative References  . . . . . . . . . . . . . . . . . . . .   6
    Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .   7
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   7
 
 1.  Introduction
 
-   This document describes an alternate mechanism to [RFC6698] as
-   described in [I-D.bortzmeyer-dprive-resolver-to-auth] Section 2
-   extending the authentication of DoT [RFC7858] to insecure delegations
-   and therefore enabling the onboarding of DoT authoritative servers
-   without the requirement for the authorities to support DNSSEC
-   ([RFC4033], [RFC4034], and [RFC4035]).  To do so, this document
-   introduce the Delegation SPKI (DSPKI) resource record, its purpose,
-   usage and format.
+   This document describes an alternative mechanism to DANE ([RFC6698])
+   as described in [I-D.bortzmeyer-dprive-resolver-to-auth] Section 2
+   extending the authentication of DNS over Transport Layer Security
+   (DoT) [RFC7858] to insecure delegations and therefore enabling the
+   onboarding of DoT authoritative servers without the requirement for
+   the authorities to support DNSSEC ([RFC4033], [RFC4034], and
+   [RFC4035]).  To do so, this document introduce the Delegation Subject
+   Public Key Info (DSPKI) resource record, its purpose, usage and
+   format.
 
 2.  Terminology
 
@@ -104,15 +106,16 @@ Table of Contents
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
    "OPTIONAL" in this document are to be interpreted as described in BCP
-   14 [RFC2119] [RFC8174] when, and only when, they appear in all
-   capitals, as shown here.
 
 
 
-Bretelle                Expires September 9, 2019               [Page 2]
+Bretelle               Expires September 12, 2019               [Page 2]
 
 Internet-Draft        dot-for-insecure-delegations            March 2019
 
+
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
 
 3.  Authenticating an insecure delegation
 
@@ -129,43 +132,40 @@ Internet-Draft        dot-for-insecure-delegations            March 2019
    Key Infrastructure (PKIX [RFC6125]) , SPKI, which have their own pros
    and cons.
 
-3.1.  Public Key Infranstructure (PKIX)
+3.1.  Public Key Infrastructure (PKIX)
 
-   It would be possible to authenticate the nameservers of the insecure
+   It would be possible to authenticate the name servers of the insecure
    delegation using PKIX, relying on an existing trust model and trust
    anchors.
 
-   While simple, a single trusted CA that breaks said trust (voluntarily
-   or involuntarily), can issue certificate for any domains, allowing an
-   attacker to potentially impersonate both the application and the DoT
-   server.
+   While simple, a single trusted Certificate Authority (CA) that breaks
+   said trust (voluntarily or involuntarily), can issue certificate for
+   any domains, allowing an attacker to potentially impersonate both the
+   application and the DoT server.
 
    Another issue that rises is that the DoT servers may use an identity
    which belong to the same origin as application servers, which could
    permit personal information (such as cookies) to be leaked to the DoT
    servers.
 
-3.2.  Simple Public-Key Infrastructure (SPKI)
+3.2.  Subject Public Key Info (SPKI)
 
-   SPKI on the other hand does not have the same issues than PKIX, the
-   certificates can be generated by the authority itself, adding a
-   separation of privileges between the PKIX infrastructure and the DNS
-   one.
+   The zone owner generates his own certificate and distribute the SPKI
+   fingerprint into the DNS.
 
-   The problem is now on how to advertise/distribute the delegation's
-   public key.
-
-   This is in essence what TLSA records solve, but with the use of
-   DNSSEC enabled and functional for the queried zone.  For insecure
-   delegations, simply advertising the public key would be subject to
-   interception and mangling.
+   This is in essence what, amongst other things, TLSA records solve but
+   with the requirement for DNSSEC to be enabled and functional for the
+   queried zone.  For insecure delegations, simply advertising the SPKI
+   fingerprint would be trivial to intercept, disable, and modify.
 
 
 
 
 
 
-Bretelle                Expires September 9, 2019               [Page 3]
+
+
+Bretelle               Expires September 12, 2019               [Page 3]
 
 Internet-Draft        dot-for-insecure-delegations            March 2019
 
@@ -173,24 +173,12 @@ Internet-Draft        dot-for-insecure-delegations            March 2019
 3.3.  Authenticating from the parent
 
    While a delegation is not secured, the DNS core infrastructure
-   already support DNSSEC, meaning that if the owner of an insecure
-   delegation could set the public key to authenticate the DoT servers
-   against, such key could be authenticated using DNSSEC at the parent
-   level, which would then permit trusting the DoT servers providing
-   their certificate validates against the ( then validated) public key
-   provided by the parent.
-
-   From this stage, the "formerly" insecure delegation can be
-   authenticated, and therefore considered secure, allowing delegating
-   to other zones which can be authenticated by either DNSSEC or TLS.
-
-   In order to provide its public key to the DoT clients, an insecure
-   would set the DSPKI RRset at the parent with the content of its
-   extracted SPKI, which the parent then sign.
-
-   A DoT client which is about to talk with a DoT server can obtain and
-   validate the DSPKI RRset from the parent and authenticate the DoT
-   server, without needing the DoT server to serve a secure delegation.
+   already support, for the most part, DNSSEC, meaning that if the owner
+   of an insecure delegation could set the SPKI fingerprint in a
+   resource record (RR) at the parent, such fingerprint could be signed
+   and validated by the DoT client.  The DoT client can then establish a
+   TLS connection to the zone name servers and authenticate the DoT
+   server against the fingerprint acquired earlier from the parent zone.
 
 3.3.1.  Example
 
@@ -200,59 +188,101 @@ Internet-Draft        dot-for-insecure-delegations            March 2019
    A DoT client looking for records under example.com will learn from
    .com that example.com is delegated to
 
-   example.com 172800 NS ns1.example.com
-   example.com 172800 NS ns2.example.com
-   example.com 86400 DSPKI h0KPxSKAPTEGXnvOPPA/5HUJZjHl4Hu9eg/eYMTPJcc=
-   ns1.example.com 172800 AAAA 2001:db8:abcd:12:1:2:3:4
-   ns2.example.com 172800 AAAA 2001:db8:abcd:ab:1:2:3:4
+   example.com IN 172800 NS ns1.example.com
+   example.com IN 172800 NS ns2.example.com
+   # sha256
+   example.com IN DSPKI (
+       1 4e44f900cdeb8c769f4df97e23f8fc81
+         4ac4bf45a3d9dc265a2ed925171f0b71 )
+   # sha512
+   example.com IN DSPKI (
+       2 ab40ed300fd220d8c72a600069f9ceb1
+         f9fd7c003117e4ef34b228da1c9d76a0
+         500be99e82a0c01e7f80930a46ad28b8
+         ed3d5ed2df34d822b5f56c99f45889ef
+   )
+   ns1.example.com IN 172800 AAAA 2001:db8:abcd:12:1:2:3:4
+   ns2.example.com IN 172800 AAAA 2001:db8:abcd:ab:1:2:3:4
 
    with the accompanying signature.
 
    The DSPKI RRset signals that the nameservers are able to support DNS-
-   over-TLS and the DoT client can authenticate them using the provided
-   public key,
-
-   If subzone.example.com is a delegation from example.com, example.com
-   can provide the DSPKI RRSet of the delegation.  While example.com is
-   not a secured delegation, because it has been authenticated using
-   TLS, it is also able to be part of the chain of trust and provide
-   either a DS or DSPKI RRset for subzone.example.com
-
-
-
-
-Bretelle                Expires September 9, 2019               [Page 4]
-
-Internet-Draft        dot-for-insecure-delegations            March 2019
-
+   over-TLS.  The DoT client can then establish a TLS connection to the
+   DoT server and authenticate them by ensuring that the SPKI matches
+   the one learned from the parent zone.
 
 4.  DSPKI Resource Record
 
    There may be 0 or more DSPKI served by the parent of the delegation.
-   0 would mean that DSPKI is not supported, therefore the DoT client
-   could try other alternatives.  1 or multiple public keys can be
-   distributed to let the DoT client validate multiple public keys,
-   which can be useful while doing certificate rotation or when willing
-   to provide different secret keys to different providers that may
-   serve the delegated zone.
+   0 means that DSPKI is not supported, therefore the DoT client could
+   try other alternatives.  1 or multiple public keys can be distributed
+   to let the DoT client validate multiple public keys, which can be
+   useful while doing certificate rotation or when willing to provide
 
-4.1.  DSPKI RDATA Format
 
-   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-   /                  PUBKEY                       /
-   /                                               /
-   +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-   Where PUBKEY: A base64 encoded string of the sha256sum of the public
-   key, as generated by: ~~~~ openssl x509 -in cert.pem -pubkey -noout |
-   openssl pkey -pubin -outform der | \ openssl dgst -sha256 -binary |
-   openssl enc -base64 ~~~~
+Bretelle               Expires September 12, 2019               [Page 4]
+
+Internet-Draft        dot-for-insecure-delegations            March 2019
 
-   *FIXME*: consider * format that can evolve over time, e.g 1 byte
-   specifying hashing algorithm.  * no need for base64, raw bytes are
-   fine.  * alternate URI to support DoT (host, port, spki), DoH (host,
-   port, URL template), DNS-over-QUIC... would rather be an ALTNS type
-   of record * CDSPKI a la CDS, CDNSKEY
+
+   different secret keys to different providers that may serve the
+   delegated zone.
+
+4.1.  The DSPKI Resource Record
+
+   The DSPKI resource record (RR) is used to associate a DoT server
+   public key (SPKI) with the zone it is serving.
+
+4.1.1.  DSPKI RDATA Wire Format
+
+   The RDATA of the DSPKI RR consists of a one-octet matching type
+   field, and the DER-encoded binary structure of the
+   SubjectPublicKeyInfo field as defined in [RFC5280].
+
+                        1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   | matching type | DER-encoded SPKI field                        /
+   +-+-+-+-+-+-+-+-+                                               /
+   /                                                               /
+   /                                                               /
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+4.1.1.1.  The Matching Type Field
+
+   A one-octet value, called "matching type", specifies how the SPKI is
+   presented.  The types defined in this document are:
+
+   o  0 - Exact match on SPKI
+
+   o  1 - SHA-256 hash of SPKI
+
+   o  2 - SHA-512 hash of SPKI
+
+   Where the SPKI can be extracted as follow:
+
+openssl x509 -in cert.pem -pubkey -noout | openssl pkey -pubin -outform der
+
+   and the SHA-256 as:
+
+openssl x509 -in cert.pem -pubkey -noout | openssl pkey -pubin -outform der | \
+    openssl dgst -sha256 -binary
+
+   *FIXME*: consider
+
+   o  alternate URI to support DoT (host, port, spki), DoH (host, port,
+      URL template), DNS-over-QUIC... would rather be an ALTNS type of
+      record
+
+
+
+Bretelle               Expires September 12, 2019               [Page 5]
+
+Internet-Draft        dot-for-insecure-delegations            March 2019
+
+
+   o  CDSPKI a la CDS, CDNSKEY
 
 5.  Security Considerations
 
@@ -275,13 +305,6 @@ Internet-Draft        dot-for-insecure-delegations            March 2019
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
-
-
-Bretelle                Expires September 9, 2019               [Page 5]
-
-Internet-Draft        dot-for-insecure-delegations            March 2019
-
-
    [RFC4033]  Arends, R., Austein, R., Larson, M., Massey, D., and S.
               Rose, "DNS Security Introduction and Requirements",
               RFC 4033, DOI 10.17487/RFC4033, March 2005,
@@ -300,6 +323,20 @@ Internet-Draft        dot-for-insecure-delegations            March 2019
    [RFC4956]  Arends, R., Kosters, M., and D. Blacka, "DNS Security
               (DNSSEC) Opt-In", RFC 4956, DOI 10.17487/RFC4956, July
               2007, <https://www.rfc-editor.org/info/rfc4956>.
+
+   [RFC5280]  Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,
+              Housley, R., and W. Polk, "Internet X.509 Public Key
+              Infrastructure Certificate and Certificate Revocation List
+              (CRL) Profile", RFC 5280, DOI 10.17487/RFC5280, May 2008,
+              <https://www.rfc-editor.org/info/rfc5280>.
+
+
+
+
+Bretelle               Expires September 12, 2019               [Page 6]
+
+Internet-Draft        dot-for-insecure-delegations            March 2019
+
 
    [RFC6125]  Saint-Andre, P. and J. Hodges, "Representation and
               Verification of Domain-Based Application Service Identity
@@ -328,16 +365,6 @@ Internet-Draft        dot-for-insecure-delegations            March 2019
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
-
-
-
-
-
-Bretelle                Expires September 9, 2019               [Page 6]
-
-Internet-Draft        dot-for-insecure-delegations            March 2019
-
-
 Acknowledgments
 
    TODO acknowledge.
@@ -362,31 +389,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Bretelle                Expires September 9, 2019               [Page 7]
+Bretelle               Expires September 12, 2019               [Page 7]

@@ -284,12 +284,13 @@ ul.toc li {
 <link href="#rfc.section.1" rel="Chapter" title="1 Introduction">
 <link href="#rfc.section.2" rel="Chapter" title="2 Terminology">
 <link href="#rfc.section.3" rel="Chapter" title="3 Authenticating an insecure delegation">
-<link href="#rfc.section.3.1" rel="Chapter" title="3.1 Public Key Infranstructure (PKIX)">
-<link href="#rfc.section.3.2" rel="Chapter" title="3.2 Simple Public-Key Infrastructure (SPKI)">
+<link href="#rfc.section.3.1" rel="Chapter" title="3.1 Public Key Infrastructure (PKIX)">
+<link href="#rfc.section.3.2" rel="Chapter" title="3.2 Subject Public Key Info (SPKI)">
 <link href="#rfc.section.3.3" rel="Chapter" title="3.3 Authenticating from the parent">
 <link href="#rfc.section.3.3.1" rel="Chapter" title="3.3.1 Example">
 <link href="#rfc.section.4" rel="Chapter" title="4 DSPKI Resource Record">
-<link href="#rfc.section.4.1" rel="Chapter" title="4.1 DSPKI RDATA Format">
+<link href="#rfc.section.4.1" rel="Chapter" title="4.1 The DSPKI Resource Record">
+<link href="#rfc.section.4.1.1" rel="Chapter" title="4.1.1 DSPKI RDATA Wire Format">
 <link href="#rfc.section.5" rel="Chapter" title="5 Security Considerations">
 <link href="#rfc.section.6" rel="Chapter" title="6 IANA Considerations">
 <link href="#rfc.references" rel="Chapter" title="7 Normative References">
@@ -302,9 +303,9 @@ ul.toc li {
 
   <meta name="dct.creator" content="Bretelle, M." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-bretelle-dprive-dot-for-insecure-delegations-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-03-08" />
-  <meta name="dct.abstract" content="This document describes an alternate mechanism to DANE (" />
-  <meta name="description" content="This document describes an alternate mechanism to DANE (" />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-03-11" />
+  <meta name="dct.abstract" content="This document describes an alternative mechanism to DANE (" />
+  <meta name="description" content="This document describes an alternative mechanism to DANE (" />
 
 </head>
 
@@ -323,10 +324,10 @@ ul.toc li {
 </tr>
 <tr>
 <td class="left">Intended status: Standards Track</td>
-<td class="right">March 08, 2019</td>
+<td class="right">March 11, 2019</td>
 </tr>
 <tr>
-<td class="left">Expires: September 9, 2019</td>
+<td class="left">Expires: September 12, 2019</td>
 <td class="right"></td>
 </tr>
 
@@ -338,12 +339,12 @@ ul.toc li {
   <span class="filename">draft-bretelle-dprive-dot-for-insecure-delegations-latest</span></p>
   
   <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
-<p>This document describes an alternate mechanism to DANE (<a href="#RFC6698" class="xref">[RFC6698]</a>) in order to authenticate a DNS-over-TLS (DoT <a href="#RFC7858" class="xref">[RFC7858]</a>) authoritative server by not making DNSSEC a hard requirement, making DoT server authentication available for insecure delegations.</p>
+<p>This document describes an alternative mechanism to DANE (<a href="#RFC6698" class="xref">[RFC6698]</a>) in order to authenticate a DNS-over-TLS (DoT <a href="#RFC7858" class="xref">[RFC7858]</a>) authoritative server by not making DNSSEC a hard requirement, making DoT server authentication available for insecure delegations.</p>
 <h1 id="rfc.status"><a href="#rfc.status">Status of This Memo</a></h1>
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on September 9, 2019.</p>
+<p>This Internet-Draft will expire on September 12, 2019.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2019 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -359,9 +360,9 @@ ul.toc li {
 </li>
 <li>3.   <a href="#rfc.section.3">Authenticating an insecure delegation</a>
 </li>
-<ul><li>3.1.   <a href="#rfc.section.3.1">Public Key Infranstructure (PKIX)</a>
+<ul><li>3.1.   <a href="#rfc.section.3.1">Public Key Infrastructure (PKIX)</a>
 </li>
-<li>3.2.   <a href="#rfc.section.3.2">Simple Public-Key Infrastructure (SPKI)</a>
+<li>3.2.   <a href="#rfc.section.3.2">Subject Public Key Info (SPKI)</a>
 </li>
 <li>3.3.   <a href="#rfc.section.3.3">Authenticating from the parent</a>
 </li>
@@ -369,9 +370,11 @@ ul.toc li {
 </li>
 </ul></ul><li>4.   <a href="#rfc.section.4">DSPKI Resource Record</a>
 </li>
-<ul><li>4.1.   <a href="#rfc.section.4.1">DSPKI RDATA Format</a>
+<ul><li>4.1.   <a href="#rfc.section.4.1">The DSPKI Resource Record</a>
 </li>
-</ul><li>5.   <a href="#rfc.section.5">Security Considerations</a>
+<ul><li>4.1.1.   <a href="#rfc.section.4.1.1">DSPKI RDATA Wire Format</a>
+</li>
+</ul></ul><li>5.   <a href="#rfc.section.5">Security Considerations</a>
 </li>
 <li>6.   <a href="#rfc.section.6">IANA Considerations</a>
 </li>
@@ -388,7 +391,7 @@ ul.toc li {
   <h1 id="rfc.section.1">
 <a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a>
 </h1>
-<p id="rfc.section.1.p.1">This document describes an alternate mechanism to <a href="#RFC6698" class="xref">[RFC6698]</a> as described in <a href="#I-D.bortzmeyer-dprive-resolver-to-auth" class="xref">[I-D.bortzmeyer-dprive-resolver-to-auth]</a> Section 2 extending the authentication of DoT <a href="#RFC7858" class="xref">[RFC7858]</a> to insecure delegations and therefore enabling the onboarding of DoT authoritative servers without the requirement for the authorities to support DNSSEC (<a href="#RFC4033" class="xref">[RFC4033]</a>, <a href="#RFC4034" class="xref">[RFC4034]</a>, and <a href="#RFC4035" class="xref">[RFC4035]</a>).  To do so, this document introduce the Delegation SPKI (DSPKI) resource record, its purpose, usage and format.</p>
+<p id="rfc.section.1.p.1">This document describes an alternative mechanism to DANE (<a href="#RFC6698" class="xref">[RFC6698]</a>) as described in <a href="#I-D.bortzmeyer-dprive-resolver-to-auth" class="xref">[I-D.bortzmeyer-dprive-resolver-to-auth]</a> Section 2 extending the authentication of DNS over Transport Layer Security (DoT) <a href="#RFC7858" class="xref">[RFC7858]</a> to insecure delegations and therefore enabling the onboarding of DoT authoritative servers without the requirement for the authorities to support DNSSEC (<a href="#RFC4033" class="xref">[RFC4033]</a>, <a href="#RFC4034" class="xref">[RFC4034]</a>, and <a href="#RFC4035" class="xref">[RFC4035]</a>).  To do so, this document introduce the Delegation Subject Public Key Info (DSPKI) resource record, its purpose, usage and format.</p>
 <h1 id="rfc.section.2">
 <a href="#rfc.section.2">2.</a> <a href="#terminology" id="terminology">Terminology</a>
 </h1>
@@ -402,54 +405,93 @@ ul.toc li {
 <p id="rfc.section.3.p.1">To authenticate a DoT server of a secure delegation, it is possible to use the TLSA resource record <a href="#RFC6698" class="xref">[RFC6698]</a> of the nameserver as decribed in <a href="#I-D.bortzmeyer-dprive-resolver-to-auth" class="xref">[I-D.bortzmeyer-dprive-resolver-to-auth]</a> Section 2, while this method is valid, the absence of support of DNSSEC for such delegations precludes the onboarding and discovery of nameservers serving those zones as DoT servers.</p>
 <p id="rfc.section.3.p.2">Without the use of DNSSEC, a delegation is not able to authenticate itself as the chain of trust cannot be followed, however other mechanisms exist to have a server authenticate itself, such as Public Key Infrastructure (PKIX <a href="#RFC6125" class="xref">[RFC6125]</a>) , SPKI, which have their own pros and cons.</p>
 <h1 id="rfc.section.3.1">
-<a href="#rfc.section.3.1">3.1.</a> <a href="#public-key-infranstructure-pkix" id="public-key-infranstructure-pkix">Public Key Infranstructure (PKIX)</a>
+<a href="#rfc.section.3.1">3.1.</a> <a href="#public-key-infrastructure-pkix" id="public-key-infrastructure-pkix">Public Key Infrastructure (PKIX)</a>
 </h1>
-<p id="rfc.section.3.1.p.1">It would be possible to authenticate the nameservers of the insecure delegation using PKIX, relying on an existing trust model and trust anchors.</p>
-<p id="rfc.section.3.1.p.2">While simple, a single trusted CA that breaks said trust (voluntarily or involuntarily), can issue certificate for any domains, allowing an attacker to potentially impersonate both the application and the DoT server.</p>
+<p id="rfc.section.3.1.p.1">It would be possible to authenticate the name servers of the insecure delegation using PKIX, relying on an existing trust model and trust anchors.</p>
+<p id="rfc.section.3.1.p.2">While simple, a single trusted Certificate Authority (CA) that breaks said trust (voluntarily or involuntarily), can issue certificate for any domains, allowing an attacker to potentially impersonate both the application and the DoT server.</p>
 <p id="rfc.section.3.1.p.3">Another issue that rises is that the DoT servers may use an identity which belong to the same origin as application servers, which could permit personal information (such as cookies) to be leaked to the DoT servers.</p>
 <h1 id="rfc.section.3.2">
-<a href="#rfc.section.3.2">3.2.</a> <a href="#simple-public-key-infrastructure-spki" id="simple-public-key-infrastructure-spki">Simple Public-Key Infrastructure (SPKI)</a>
+<a href="#rfc.section.3.2">3.2.</a> <a href="#subject-public-key-info-spki" id="subject-public-key-info-spki">Subject Public Key Info (SPKI)</a>
 </h1>
-<p id="rfc.section.3.2.p.1">SPKI on the other hand does not have the same issues than PKIX, the certificates can be generated by the authority itself, adding a separation of privileges between the PKIX infrastructure and the DNS one.</p>
-<p id="rfc.section.3.2.p.2">The problem is now on how to advertise/distribute the delegation&#8217;s public key.</p>
-<p id="rfc.section.3.2.p.3">This is in essence what TLSA records solve, but with the use of DNSSEC enabled and functional for the queried zone.  For insecure delegations, simply advertising the public key would be subject to interception and mangling.</p>
+<p id="rfc.section.3.2.p.1">The zone owner generates his own certificate and distribute the SPKI fingerprint into the DNS.</p>
+<p id="rfc.section.3.2.p.2">This is in essence what, amongst other things, TLSA records solve but with the requirement for DNSSEC to be enabled and functional for the queried zone.  For insecure delegations, simply advertising the SPKI fingerprint would be trivial to intercept, disable, and modify.</p>
 <h1 id="rfc.section.3.3">
 <a href="#rfc.section.3.3">3.3.</a> <a href="#authenticating-from-the-parent" id="authenticating-from-the-parent">Authenticating from the parent</a>
 </h1>
-<p id="rfc.section.3.3.p.1">While a delegation is not secured, the DNS core infrastructure already support DNSSEC, meaning that if the owner of an insecure delegation could set the public key to authenticate the DoT servers against, such key could be authenticated using DNSSEC at the parent level, which would then permit trusting the DoT servers providing their certificate validates against the ( then validated) public key provided by the parent.</p>
-<p id="rfc.section.3.3.p.2">From this stage, the &#8220;formerly&#8221; insecure delegation can be authenticated, and therefore considered secure, allowing delegating to other zones which can be authenticated by either DNSSEC or TLS.</p>
-<p id="rfc.section.3.3.p.3">In order to provide its public key to the DoT clients, an insecure would set the DSPKI RRset at the parent with the content of its extracted SPKI, which the parent then sign.</p>
-<p id="rfc.section.3.3.p.4">A DoT client which is about to talk with a DoT server can obtain and validate the DSPKI RRset from the parent and authenticate the DoT server, without needing the DoT server to serve a secure delegation.</p>
+<p id="rfc.section.3.3.p.1">While a delegation is not secured, the DNS core infrastructure already support, for the most part, DNSSEC, meaning that if the owner of an insecure delegation could set the SPKI fingerprint in a resource record (RR) at the parent, such fingerprint could be signed and validated by the DoT client.  The DoT client can then establish a TLS connection to the zone name servers and authenticate the DoT server against the fingerprint acquired earlier from the parent zone.</p>
 <h1 id="rfc.section.3.3.1">
 <a href="#rfc.section.3.3.1">3.3.1.</a> <a href="#example" id="example">Example</a>
 </h1>
 <p id="rfc.section.3.3.1.p.1">example.com is an insecure delegation from .com which has set the DSPKI RRset.</p>
 <p id="rfc.section.3.3.1.p.2">A DoT client looking for records under example.com will learn from .com that example.com is delegated to</p>
 <pre>
-example.com 172800 NS ns1.example.com
-example.com 172800 NS ns2.example.com
-example.com 86400 DSPKI h0KPxSKAPTEGXnvOPPA/5HUJZjHl4Hu9eg/eYMTPJcc=
-ns1.example.com 172800 AAAA 2001:db8:abcd:12:1:2:3:4
-ns2.example.com 172800 AAAA 2001:db8:abcd:ab:1:2:3:4
+example.com IN 172800 NS ns1.example.com
+example.com IN 172800 NS ns2.example.com
+# sha256
+example.com IN DSPKI (
+    1 4e44f900cdeb8c769f4df97e23f8fc81
+      4ac4bf45a3d9dc265a2ed925171f0b71 )
+# sha512
+example.com IN DSPKI (
+    2 ab40ed300fd220d8c72a600069f9ceb1
+      f9fd7c003117e4ef34b228da1c9d76a0
+      500be99e82a0c01e7f80930a46ad28b8
+      ed3d5ed2df34d822b5f56c99f45889ef
+)
+ns1.example.com IN 172800 AAAA 2001:db8:abcd:12:1:2:3:4
+ns2.example.com IN 172800 AAAA 2001:db8:abcd:ab:1:2:3:4
 </pre>
 <p id="rfc.section.3.3.1.p.3">with the accompanying signature.</p>
-<p id="rfc.section.3.3.1.p.4">The DSPKI RRset signals that the nameservers are able to support DNS-over-TLS and the DoT client can authenticate them using the provided public key,</p>
-<p id="rfc.section.3.3.1.p.5">If subzone.example.com is a delegation from example.com, example.com can provide the DSPKI RRSet of the delegation. While example.com is not a secured delegation, because it has been authenticated using TLS, it is also able to be part of the chain of trust and provide either a DS or DSPKI RRset for subzone.example.com</p>
+<p id="rfc.section.3.3.1.p.4">The DSPKI RRset signals that the nameservers are able to support DNS-over-TLS.  The DoT client can then establish a TLS connection to the DoT server and authenticate them by ensuring that the SPKI matches the one learned from the parent zone.</p>
 <h1 id="rfc.section.4">
 <a href="#rfc.section.4">4.</a> <a href="#dspki-resource-record" id="dspki-resource-record">DSPKI Resource Record</a>
 </h1>
-<p id="rfc.section.4.p.1">There may be 0 or more DSPKI served by the parent of the delegation. 0 would mean that DSPKI is not supported, therefore the DoT client could try other alternatives.  1 or multiple public keys can be distributed to let the DoT client validate multiple public keys, which can be useful while doing certificate rotation or when willing to provide different secret keys to different providers that may serve the delegated zone.</p>
+<p id="rfc.section.4.p.1">There may be 0 or more DSPKI served by the parent of the delegation. 0 means that DSPKI is not supported, therefore the DoT client could try other alternatives.  1 or multiple public keys can be distributed to let the DoT client validate multiple public keys, which can be useful while doing certificate rotation or when willing to provide different secret keys to different providers that may serve the delegated zone.</p>
 <h1 id="rfc.section.4.1">
-<a href="#rfc.section.4.1">4.1.</a> <a href="#dspki-rdata-format" id="dspki-rdata-format">DSPKI RDATA Format</a>
+<a href="#rfc.section.4.1">4.1.</a> <a href="#the-dspki-resource-record" id="the-dspki-resource-record">The DSPKI Resource Record</a>
 </h1>
+<p id="rfc.section.4.1.p.1">The DSPKI resource record (RR) is used to associate a DoT server public key (SPKI) with the zone it is serving.</p>
+<h1 id="rfc.section.4.1.1">
+<a href="#rfc.section.4.1.1">4.1.1.</a> <a href="#dspki-rdata-wire-format" id="dspki-rdata-wire-format">DSPKI RDATA Wire Format</a>
+</h1>
+<p id="rfc.section.4.1.1.p.1">The RDATA of the DSPKI RR consists of a one-octet matching type field, and the DER-encoded binary structure of the SubjectPublicKeyInfo field as defined in <a href="#RFC5280" class="xref">[RFC5280]</a>.</p>
 <pre>
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-/                  PUBKEY                       /
-/                                               /
-+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+                     1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+| matching type | DER-encoded SPKI field                        /
++-+-+-+-+-+-+-+-+                                               /
+/                                                               /
+/                                                               /
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 </pre>
-<p id="rfc.section.4.1.p.1">Where PUBKEY: A base64 encoded string of the sha256sum of the public key, as generated by: ~~~~ openssl x509 -in cert.pem -pubkey -noout | openssl pkey -pubin -outform der | \ openssl dgst -sha256 -binary | openssl enc -base64 ~~~~</p>
-<p><strong>FIXME</strong>: consider * format that can evolve over time, e.g 1 byte specifying hashing algorithm.  * no need for base64, raw bytes are fine.  * alternate URI to support DoT (host, port, spki), DoH (host, port, URL template), DNS-over-QUIC&#8230; would rather be an ALTNS type of record * CDSPKI a la CDS, CDNSKEY</p>
+<h1 id="rfc.section.4.1.1.1">
+<a href="#rfc.section.4.1.1.1">4.1.1.1.</a> <a href="#the-matching-type-field" id="the-matching-type-field">The Matching Type Field</a>
+</h1>
+<p id="rfc.section.4.1.1.1.p.1">A one-octet value, called &#8220;matching type&#8221;, specifies how the SPKI is presented.  The types defined in this document are:</p>
+<p></p>
+
+<ul>
+<li>0 &#8211; Exact match on SPKI</li>
+<li>1 &#8211; SHA-256 hash of SPKI</li>
+<li>2 &#8211; SHA-512 hash of SPKI</li>
+</ul>
+<p id="rfc.section.4.1.1.1.p.3">Where the SPKI can be extracted as follow:</p>
+<pre>
+openssl x509 -in cert.pem -pubkey -noout | openssl pkey -pubin -outform der
+</pre>
+<p id="rfc.section.4.1.1.1.p.4">and the SHA-256 as:</p>
+<pre>
+openssl x509 -in cert.pem -pubkey -noout | openssl pkey -pubin -outform der | \
+    openssl dgst -sha256 -binary
+</pre>
+<p><strong>FIXME</strong>: consider</p>
+<p></p>
+
+<ul>
+<li>alternate URI to support DoT (host, port, spki), DoH (host, port, URL template), DNS-over-QUIC&#8230; would rather be an ALTNS type of record</li>
+<li>CDSPKI a la CDS, CDNSKEY</li>
+</ul>
 <h1 id="rfc.section.5">
 <a href="#rfc.section.5">5.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a>
 </h1>
@@ -490,6 +532,11 @@ ns2.example.com 172800 AAAA 2001:db8:abcd:ab:1:2:3:4
 <td class="reference"><b id="RFC4956">[RFC4956]</b></td>
 <td class="top">
 <a>Arends, R.</a>, <a>Kosters, M.</a> and <a>D. Blacka</a>, "<a href="https://tools.ietf.org/html/rfc4956">DNS Security (DNSSEC) Opt-In</a>", RFC 4956, DOI 10.17487/RFC4956, July 2007.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC5280">[RFC5280]</b></td>
+<td class="top">
+<a>Cooper, D.</a>, <a>Santesson, S.</a>, <a>Farrell, S.</a>, <a>Boeyen, S.</a>, <a>Housley, R.</a> and <a>W. Polk</a>, "<a href="https://tools.ietf.org/html/rfc5280">Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile</a>", RFC 5280, DOI 10.17487/RFC5280, May 2008.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC6125">[RFC6125]</b></td>
